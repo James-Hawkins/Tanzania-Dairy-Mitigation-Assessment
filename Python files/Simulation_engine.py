@@ -1177,7 +1177,7 @@ def sim_engine(  res,
                         grass_production[i]=wsg_p*(1/30)*grass_area[ss,b,c]*1000*grass_annual_yield/12
                         pasture_production[i]=wsg_p*(1/30)*pasture_area[ss,b,c]*1000*pasture_annual_yield/12
                         napier_silage_production[i]=0
-                        stover_production[i]=(0.25)*(1/6)*stover_area[ss,b,c]*1000*stover_annual_yield/30
+                        stover_production[i]=(1/6)*stover_area[ss,b,c]*1000*stover_annual_yield/30
 
                     for i in ld:
                         napier_production[i] = dsdn*(1/12)*napier_area[ss,b,c]*1000*napier_annual_yield/(30)
