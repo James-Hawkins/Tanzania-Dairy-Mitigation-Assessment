@@ -18,33 +18,26 @@ from matplotlib.pyplot import figure
 from matplotlib.pyplot import Axes
 from pathlib import Path
 from scipy.stats import norm
-from scipy.stats import gamma
 from matplotlib import rcParams
 from matplotlib.patches import Patch
 from matplotlib import lines
 from matplotlib.lines import Line2D
-# Import other miscelleneous packages
+
+# Other miscelleneous packages
 import yaml
 import datetime
 import time
 import math
 import random
 import warnings
-warnings.filterwarnings("ignore")
+
 import numpy as np
 import pandas as pd
 import xlrd 
 import textwrap
 import csv
 
-rcParams['mathtext.default'] = 'regular'
-
-#%matplotlib inline
-
-
-plt.style.use('seaborn-darkgrid')
-
-ticklabelpad = mpl.rcParams['xtick.major.pad']
+warnings.filterwarnings("ignore")
 
 #%load_ext autoreload
 #%autoreload 2
@@ -52,7 +45,7 @@ ticklabelpad = mpl.rcParams['xtick.major.pad']
 cwd = os.getcwd()
 cwd
 
-# mean days per month
+# mean days per month for livsim timestep
 DPM = 30
 
 
@@ -271,9 +264,6 @@ class Model:
 
         
         # MODEL SETS
-        
-
-        
         lps = self.systems
         breed = self.breed
         cohort = self.cohorts
@@ -281,14 +271,12 @@ class Model:
         subsectors = [1,2]
         items = ['herd_pop','cow','heifer','bull','ml_calf','fe_calf','juv_male']
 
-
         # Load data files
         loc = (cwd+str('\\all_data.xlsx'))
         reg_data = Path(cwd+str('/regional data files/'))
 
 
         data_wb = xlrd.open_workbook(loc)
-        
         
         
         reg_data=Path(cwd+str('/regional data files/'))
