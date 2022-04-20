@@ -12,41 +12,21 @@ import time
 import math
 import random
 import warnings
-warnings.filterwarnings("ignore")
+
 import numpy as np
 import pandas as pd
 import xlrd 
 import textwrap
 
 import csv
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from matplotlib.pyplot import figure
-from matplotlib.pyplot import Axes
-from pathlib import Path
-from scipy.stats import norm
-from scipy.stats import gamma
-from matplotlib import rcParams
 
-rcParams['mathtext.default'] = 'regular'
+warnings.filterwarnings("ignore")
 
 
-
-plt.style.use('seaborn-darkgrid')
-
-ticklabelpad = mpl.rcParams['xtick.major.pad']
-
-
-cwd = os.getcwd()
-cwd
-
-# mean days per month
-DPM = 30
 
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
-
 
 
 
@@ -98,7 +78,6 @@ def sim_engine(  res,
                 sheet = data_wb.sheet_by_index(4) 
                 diet_data=(cwd+str('\\diet_MRH.xlsx'))
 
-
             diets=xlrd.open_workbook(diet_data) 
             diet_wb = xlrd.open_workbook(diet_data)
 
@@ -147,8 +126,6 @@ def sim_engine(  res,
 
             diet_wb = xlrd.open_workbook(diet_data)
             sheet = diet_wb.sheet_by_index(7)
-
-
 
 
 
@@ -325,7 +302,6 @@ def sim_engine(  res,
         mo_fi_grs = {}
         mo_fi_pt={}
 
-
         count_calendar_month={}
         
         # Production variables (milk and meat)
@@ -408,7 +384,7 @@ def sim_engine(  res,
         Rr=150
         
         # amortization period used in LUC emissions accounting
-        amort_period=ghg_sheet.cell_value(29,col_ghg)
+        amort_period = ghg_sheet.cell_value(29,col_ghg)
 
         # Set LUC coefficient based on model type
         if (reg_analysis == 0):
@@ -484,7 +460,7 @@ def sim_engine(  res,
         out['v1_2_Milk_yield_local_total_kg_yr']=0
         out['v1_2_Milk_yield_improved_total_kg_yr']=0
         out['v1_2_Milk_yield_base_year_kg_yr']=0
-        out['v1_3_Avoided_Beef_land_use_Total_ha']=0
+        out['v1_3_Avoided_Beef_land_use_Total_ha']=0 # used only if model is set as consequential
 
         for ss in subsectors:
             for b in breed:
@@ -499,6 +475,24 @@ def sim_engine(  res,
             out['v3_4_6_Feed_intake_per_cow_sfsm_kg_dm_yr_ss'+str(ss)+'']=0
             out['v3_4_7_Feed_intake_per_cow_pasture_kg_dm_yr_ss'+str(ss)+'']=0
 
+        
+        out['v3_2_1_Feed_intake_grass_%_dm']=0
+        out['v3_2_2_Feed_intake_stover_%_dm']=0
+        out['v3_2_3_Feed_intake_napier_%_dm']=0
+        out['v3_2_4_Feed_intake_maize_bran_%_dm']=0
+        out['v3_2_5_Feed_intake_sfsm_%_dm']=0
+
+        out['v3_2_6_Feed_intake_pasture_%_dm']=0
+        out['v3_2_6_Feed_intake_grass_kg_dm']=0
+        out['v3_2_7_Feed_intake_stover_kg_dm']=0
+        out['v3_2_8_Feed_intake_napier_kg_dm']=0
+        out['v3_2_8_Feed_intake_napier_hy_kg_dm']=0
+        out['v3_2_9_Feed_intake_maize_bran_kg_dm']=0
+        out['v3_2_10_Feed_intake_sfsm_kg_dm']=0
+        out['v3_2_11_Feed_intake_pasture_kg_dm']=0
+        
+        out['v5_6_Total_feed_primary_area_expansion']=0
+        out['v5_6_Total_grasslands_area_expansion']=0
 
         out['v6_0_1_Enteric_CH4_aggregate_Mg_CO2eq_per_lps']=0
         out['v6_0_2_Manure_CH4_aggregate_Mg_CO2eq_per_lps']=0
@@ -533,36 +527,6 @@ def sim_engine(  res,
         out['v6_2_8_cropland_expansion_improved_emissions_Mg_CO2eq_per_lps']=0
         out['v6_2_9_afforestation_improved_emissions_Mg_CO2eq_per_lps']=0
 
-        out['v9_2_1_Grasslands_area_ha_per_lps'] =0
-        out['v9_2_2_Feed_area_ha_per_lps'] =0
-        out['v9_2_3_Crop_primary_area_ha_per_lps']=0
-
-        out['v3_2_1_Feed_intake_grass_%_dm']=0
-        out['v3_2_2_Feed_intake_stover_%_dm']=0
-        out['v3_2_3_Feed_intake_napier_%_dm']=0
-        out['v3_2_4_Feed_intake_maize_bran_%_dm']=0
-        out['v3_2_5_Feed_intake_sfsm_%_dm']=0
-
-        out['v3_2_6_Feed_intake_pasture_%_dm']=0
-        out['v3_2_6_Feed_intake_grass_kg_dm']=0
-        out['v3_2_7_Feed_intake_stover_kg_dm']=0
-        out['v3_2_8_Feed_intake_napier_kg_dm']=0
-        out['v3_2_8_Feed_intake_napier_hy_kg_dm']=0
-        out['v3_2_9_Feed_intake_maize_bran_kg_dm']=0
-        out['v3_2_10_Feed_intake_sfsm_kg_dm']=0
-        out['v3_2_11_Feed_intake_pasture_kg_dm']=0
-
-        out['v5_6_Total_feed_primary_area_expansion']=0
-        out['v5_6_Total_grasslands_area_expansion']=0
-
-        out['v9_15_Grass_land_use_ha_per_TLU']=0
-        out['v9_16_Stover_land_use_ha_per_TLU']=0
-        out['v9_17_Napier_land_use_ha_per_TLU']=0
-        out['v9_17_Napier_hy_land_use_ha_per_TLU']=0
-        out['v9_18_Sunflower_land_use_ha_per_TLU']=0
-        out['v9_19_Maize_land_use_ha_per_TLU']=0
-        out['v9_20_Pasture_land_use_ha_per_TLU']=0
-
         out['v8_4_herd_total_1000_head_per_lps']=0
         out['v8_6_herd_total_TLU_per_lps']=0
         out['v8_8_herd_total_local_Head_per_lps']=0
@@ -578,6 +542,10 @@ def sim_engine(  res,
 
         out['v6_0_Units_limited']=0
 
+        out['v9_2_1_Grasslands_area_ha_per_lps'] =0
+        out['v9_2_2_Feed_area_ha_per_lps'] =0
+        out['v9_2_3_Crop_primary_area_ha_per_lps']=0
+
         out['v9_4_1_Grass_area_ha_per_lps']=0
         out['v9_4_2_Stover_area_ha_per_lps']=0
         out['v9_4_3_Napier_area_ha_per_lps']=0
@@ -585,6 +553,14 @@ def sim_engine(  res,
         out['v9_4_5_Sunflower_area_ha_per_lps']=0
         out['v9_4_6_Maize_area_ha_per_lps']=0
         out['v9_4_7_Pasture_area_ha_per_lps']=0
+        
+        out['v9_15_Grass_land_use_ha_per_TLU']=0
+        out['v9_16_Stover_land_use_ha_per_TLU']=0
+        out['v9_17_Napier_land_use_ha_per_TLU']=0
+        out['v9_17_Napier_hy_land_use_ha_per_TLU']=0
+        out['v9_18_Sunflower_land_use_ha_per_TLU']=0
+        out['v9_19_Maize_land_use_ha_per_TLU']=0
+        out['v9_20_Pasture_land_use_ha_per_TLU']=0
 
         out['v_11_2_error_absolute_local_Mg']=0
         out['v_11_2_error_intensity_local_kg']=0 
@@ -1020,7 +996,6 @@ def sim_engine(  res,
                                 feed_intake_cow_gest[ss,b,c,f]=feed_cow_scen.cell(row+2,3+feeds.index(f)).value/1000
                                 feed_intake_cow_other[ss,b,c,f]=feed_cow_scen.cell(row+3,3+feeds.index(f)).value/1000
 
-
                                 feed_offer_cow[ss,b,c,'e_lac',f]=feed_cow_scen.cell(row+1,3+feeds.index(f)).value/1000
                                 feed_offer_cow[ss,b,c,'l_lac',f]=feed_cow_scen.cell(row+2,3+feeds.index(f)).value/1000
                                 feed_offer_cow[ss,b,c,'other',f]=feed_cow_scen.cell(row+3,3+feeds.index(f)).value/1000
@@ -1215,7 +1190,7 @@ def sim_engine(  res,
 
                     # stover is rationed equally over 6 months of the year (immediately following crop harvest)    
                     for i in sr:
-                        stover_production[i]=(.75)*(1/6)*stover_area[ss,b,c]*1000*stover_annual_yield/30
+                        stover_production[i]=(1/6)*stover_area[ss,b,c]*1000*stover_annual_yield/30
 
                     ## Specify actual diets for the current animal
                     if (c =='cow'):
@@ -1447,7 +1422,6 @@ def sim_engine(  res,
 
                             count_calendar_month[cmc,ss,b,c] += 1
 
-
                             feed_intake_grass_tally += fraction_roughage_supply_eaten*feed_intake_grass*GRASS.__getattribute__('DM')/1000              
                             feed_intake_stover_tally += fraction_roughage_supply_eaten*feed_intake_stover*STOVER.__getattribute__('DM')/1000                 
                             feed_intake_napier_tally += fraction_roughage_supply_eaten*(feed_intake_napier+feed_intake_napier_silage)*NAPIER.__getattribute__('DM')/1000                 
@@ -1494,12 +1468,6 @@ def sim_engine(  res,
                     sfsm_intake[ss,b,c]=12*feed_intake_sfsm_tally/simu_period
 
                     if (c == 'cow'):
-                        # if improved cow in MRH then milk yield is adjusted based on heat stress impact
-                        if (b=='improved' and l == 'MRH'):
-                            lifetime_milk =  lifetime_milk*scenario_parameters[(ss,'milk_yield_factor',s)]
-                            d.parameters['milk_crude_protein_content']['value']=d.parameters['milk_crude_protein_content']['value']*(1-scenario_parameters[(ss,'milk_protein_yield_pct_change',s)])
-                            d.parameters['milk_butterfat_content']['value']=d.parameters['milk_butterfat_content']['value']*(1-scenario_parameters[(ss,'milk_fat_yield_pct_change',s)])
-
 
                         ## convert milk production to FPCM
                         milk_yield_reg[ss,b]=12*lifetime_milk*(0.337+.116*(1/10)*d.parameters['milk_butterfat_content']['value']+0.06*(1/10)*d.parameters['milk_crude_protein_content']['value'])/simu_period
@@ -2032,18 +2000,6 @@ def sim_engine(  res,
                         crop_primary_area[(ss,'local',c)])*
                         (luc_emission_coefficient_grass_to_crop)*(timestep/amort_period)/timestep)
 
-
-                        afforestation_tally=((-1)*
-                        (44/12)*(herd_baseline_yf[(l,ss,b,'total_herd')]*herd_baseline_yf[(l,ss,b,c)]*
-                        feed_primary_area_base[(ss,b,c)]-
-                        herd[(ss,b,'total_herd')]*herd[(ss,b,c)]*
-                        feed_primary_area[(ss,b,c)])*(
-                        Reforestation_emission_coefficient_domestic)*(timestep/amort_period)/timestep) 
-
-                        if (afforestation_tally < 0):
-                            out['v6_1_9_afforestation_local_emissions_Mg_CO2eq_per_lps'] +=afforestation_tally 
-
-
                         out['v6_1_5_Direct_emissions_local_aggregate_Mg_CO2eq_per_lps']=(
                         out['v6_1_1_Enteric_CH4_local_aggregate_Mg_CO2eq_per_lps']
                         +out['v6_1_2_Manure_CH4_local_aggregate_Mg_CO2eq_per_lps']
@@ -2051,10 +2007,6 @@ def sim_engine(  res,
                         +out['v6_1_4_Soil_N2O_grassland_local_aggregate_Mg_CO2eq_per_lps']
                         +out['v6_1_4_Soil_N2O_cropland_local_aggregate_Mg_CO2eq_per_lps']
                         +out['v6_1_4_2_Feed_CO2_local_aggregate_Mg_CO2eq_per_lps'])
-
-
-
-
 
 
                     elif (b == 'improved'):
@@ -2065,27 +2017,6 @@ def sim_engine(  res,
                         out['v6_2_4_Soil_N2O_cropland_improved_aggregate_Mg_CO2eq_per_lps']+=(herd[(ss,'improved','total_herd')]*herd[(ss,'improved',c)]*soil_N2O_cropland[ss,'improved',c]/1000 )
                         out['v6_2_4_Soil_N2O_grassland_improved_aggregate_Mg_CO2eq_per_lps']+=(herd[(ss,'improved','total_herd')]*herd[(ss,'improved',c)]*soil_N2O_grassland[ss,'improved',c]/1000 )
                         out['v6_2_4_2_Feed_CO2_improved_aggregate_Mg_CO2eq_per_lps']+=(herd[(ss,'improved','total_herd')]*herd[(ss,'improved',c)]*energy_use_CO2[ss,'improved',c]/1000 )
-
-                        out['v6_2_8_cropland_expansion_improved_emissions_Mg_CO2eq_per_lps'] += (alloc_factor*
-                        (44/12)*herd[(ss,'improved',c)]*(herd[(ss,'improved','total_herd')]*
-                        crop_primary_area[(ss,'improved',c)]-herd_y0[(ss,b)]*
-                        crop_primary_area[(ss,'improved',c)])*
-                        (luc_emission_coefficient_grass_to_crop)*(timestep/amort_period)/timestep)
-
-
-                        afforestation_tally=(
-                             (-1)*(44/12)*(herd_baseline_yf[(l,ss,b,'total_herd')]*
-                                           herd_baseline_yf[(l,ss,b,c)]*
-                                           feed_primary_area_base[(ss,b,c)]-
-                                           herd[(ss,b,'total_herd')]*
-                                           herd[(ss,b,c)]*
-                                           feed_primary_area[(ss,b,c)])*
-                             (Reforestation_emission_coefficient_domestic)*(timestep/amort_period)/timestep )
-
-                        if (afforestation_tally < 0):
-
-                            out['v6_2_9_afforestation_improved_emissions_Mg_CO2eq_per_lps'] += afforestation_tally
-
 
 
                         out['v6_2_5_Direct_emissions_improved_aggregate_Mg_CO2eq_per_lps']=(
@@ -2101,15 +2032,6 @@ def sim_engine(  res,
 
                     out['v6_0_8_cropland_expansion_emissions_Mg_CO2eq_per_lps'] += alloc_factor*(44/12)*herd[(ss,b,c)]*(herd[(ss,b,'total_herd')]*crop_primary_area[(ss,b,c)]-herd_y0[(ss,b)]*crop_primary_area[(ss,b,c)])*(luc_emission_coefficient_grass_to_crop)*(timestep/amort_period)/timestep
 
-                    if ((consequential == 1) or (consequential == 0) ):
-                        out['v6_0_9_afforestation_emissions_Mg_CO2eq_per_lps']+=(-1)*(44/12)*(herd_baseline_yf[(l,ss,b,'total_herd')]*herd_baseline_yf[(l,ss,b,c)]*feed_primary_area_base[(ss,b,c)]-herd[(ss,b,'total_herd')]*herd[(ss,b,c)]*feed_primary_area[(ss,b,c)])*(Reforestation_emission_coefficient_domestic)*(timestep/amort_period)/timestep 
-                        if (out['v6_0_9_afforestation_emissions_Mg_CO2eq_per_lps']>0):
-                            out['v6_0_9_afforestation_emissions_Mg_CO2eq_per_lps']=0
-
-                        if (scenario_parameters[(ss,'milk_affor_dom',s)]  == 0):
-                            out['v6_0_9_afforestation_emissions_Mg_CO2eq_per_lps']=0
-
-
 
 
                     # v8 - herd populations
@@ -2121,18 +2043,6 @@ def sim_engine(  res,
                     out['v8_5_herd_total_Million_TLU_per_lps'] = out['v8_6_herd_total_TLU_per_lps']/1000000
                     out['v8_7_herd_total_'+str(b)+'_TLU_per_lps'] += herd[(ss,b,c)]*herd[(ss,b,'total_herd')]*TLU_equiv[(ss,b,c)]
                     out['v8_8_herd_total_'+str(b)+'_Head_per_lps'] += herd[(ss,b,c)]*herd[(ss,b,'total_herd')]
-                    print('herd size TLU',b,' is ', out['v8_7_herd_total_'+str(b)+'_TLU_per_lps'])
-                    # beef substitution 
-
-
-
-                    out['v1_3_Avoided_Beef_kg_per_year_'+str(ss)+'_'+str(b)] = herd[(ss,b,'total_herd')]*Herd_Meat_yield_Total_kg_per_year[ss,b]
-
-                    out['v1_3_Avoided_Beef_land_use_Total_ha'] += scenario_parameters[(ss,'beef_land_productivity_ha_per_kg',s)]*out['v1_3_Avoided_Beef_kg_per_year_'+str(ss)+'_'+str(b)]
-
-                    #out['v8_7_herd_total_'+str(b)+'_TLU_per_lps']*scenario_parameters[(ss,'beef_land_footprint_ha_TLU',s)]
-
-                    out['v1_3_Avoided_Dairy_ROW_Land_use'] = (out['v1_2_Milk_yield_total_kg_yr'])*(1/scenario_parameters[(ss,'milk_land_productivity_kg_per_ha',s)])
 
                     # feed areas aggregated categories 
                     out['v9_1_1_Grasslands_area_ha_per_head_'+str(b)+'_'+str(c)+'_'+str(ss)+'']=total_grasslands_area[(ss,b,c)]
@@ -2140,7 +2050,7 @@ def sim_engine(  res,
                     out['v9_2_1_Grasslands_area_ha_per_lps'] += herd[(ss,b,c)]*(herd[(ss,b,'total_herd')]*total_grasslands_area[(ss,b,c)])
                     out['v9_2_2_Feed_area_ha_per_lps'] +=  herd[(ss,b,c)]*(herd[(ss,b,'total_herd')]*(feed_area[(ss,b,c)]))
                     out['v9_2_3_Crop_primary_area_ha_per_lps']+=herd[(ss,b,c)]*(herd[(ss,b,'total_herd')]*(feed_area[(ss,b,c)]-total_grasslands_area[(ss,b,c)]))
-
+                    
                     # feed areas individual (ha per head)
                     out['v9_3_1_Grass_area_ha_per_head_'+str(b)+'_'+str(c)+'_'+str(ss)+'']=grass_area[(ss,b,c)]
                     out['v9_3_2_Stover_area_ha_per_head_'+str(b)+'_'+str(c)+'_'+str(ss)+'']=stover_area[(ss,b,c)]
@@ -2159,9 +2069,6 @@ def sim_engine(  res,
                     out['v9_4_6_Maize_area_ha_per_lps']+=maize_as_bran_area[(ss,b,c)]*herd[(ss,b,'total_herd')]*herd[(ss,b,c)]
                     out['v9_4_7_Pasture_area_ha_per_lps']+=pasture_area[(ss,b,c)]*herd[(ss,b,'total_herd')]*herd[(ss,b,c)]
                     out['v9_4_8_Total_area_ha_per_lps']=out['v9_4_1_Grass_area_ha_per_lps']+out['v9_4_2_Stover_area_ha_per_lps']+out['v9_4_3_Napier_area_ha_per_lps']+out['v9_4_4_Napier_hy_area_ha_per_lps']+out['v9_4_5_Sunflower_area_ha_per_lps']+out['v9_4_6_Maize_area_ha_per_lps']                
-
-
-
 
 
         if (check_feasibility== 1):
@@ -2351,15 +2258,14 @@ def sim_engine(  res,
 
 
         else:
-            fraction_feed_primary_area_expansion_converting_native_ecosystems=1
-            fraction_direct_grassland_area_expansion_converting_native_ecosystems=1
+            fraction_feed_primary_area_expansion_converting_native_ecosystems = 1
+            fraction_direct_grassland_area_expansion_converting_native_ecosystems = 1
             out['v6_0_6_grassland_expansion_emissions_Mg_CO2eq_per_lps']=alloc_factor*(44/12)*out['v5_6_Total_feed_primary_area_expansion']*(luc_emission_coefficient_total_area)*(timestep/amort_period)/timestep
             out['v6_0_6_grassland_expansion_direct_emissions_Mg_CO2eq_per_lps']=alloc_factor*(44/12)*out['v5_6_Total_grasslands_area_expansion']*(luc_emission_coefficient_total_area)*(timestep/amort_period)/timestep
 
         out['v6_0_Frac_Primary_area_expansion_converting_native_ecosystems'] = fraction_feed_primary_area_expansion_converting_native_ecosystems
         out['v6_0_Frac_Direct_Grassland_area_expansion_converting_native_ecosystems'] = fraction_direct_grassland_area_expansion_converting_native_ecosystems
 
-        # v7 - emissions intensities
         # v7 - emissions intensities
         out['v7_1_Enteric_CH4_intensity_kg_CO2eq_per_kg_milk_per_lps']=(1000*out['v6_0_1_Enteric_CH4_aggregate_Mg_CO2eq_per_lps']/out['v1_2_Milk_yield_total_kg_yr'] )
         out['v7_2_Manure_CH4_intensity_kg_CO2eq_per_kg_milk_per_lps']=(1000*out['v6_0_2_Manure_CH4_aggregate_Mg_CO2eq_per_lps']/out['v1_2_Milk_yield_total_kg_yr'])
@@ -2441,12 +2347,12 @@ def sim_engine(  res,
         # sort results alphanumerically
         sorted_list=sorted(out.keys(), key=lambda x:x.lower())
 
-        results_ordered={}
+        results_ordered = {}
 
         for i in sorted_list:
             results_ordered[i]=out[i]
 
-        out={}
+        out = {}
         out=results_ordered
 
 
@@ -2520,12 +2426,10 @@ def sim_engine(  res,
         ninetyfivepci_loc = 1.96*direct_ab_local
         ninetyfivepci_imp = 1.96*direct_ab_improved
 
-
         # Store results in output data frame
         out['v_11_2_error_absolute_Mg']=ninetyfivepci
         out['v_11_2_error_intensity_kg']=(1000)*ninetyfivepci/out['v1_2_Milk_yield_total_kg_yr']
         out['v_11_2_error_per_animal_Mg_per_TLU']=ninetyfivepci/out['v8_6_herd_total_TLU_per_lps']
-
 
         
         if (reg_analysis == 1):
@@ -2634,8 +2538,6 @@ def sim_engine(  res,
         out['v_12_2_3_5_Global_Grassland_Expansion_CO2_improved_aggregate_Mg_CO2eq_per_year'] = 0
         out['v_12_2_3_5_Global_Grassland_Expansion_direct_CO2_improved_aggregate_Mg_CO2eq_per_year'] = 0
         out['v_12_2_3_5_Global_Dairy_Afforestation_CO2_improved_aggregate_Mg_CO2eq_per_year'] = 0
-
-        # v_12_3 ?
         
         # GHG emissions per TLU
         out['v_12_4_1_Global_Enteric_CH4_per_animal_Mg_CO2eq_per_TLU_per_year'] = 0
@@ -2680,14 +2582,6 @@ def sim_engine(  res,
         out['v_12_5_2_herd_total_local'] = 0
         out['v_12_5_2_herd_total_improved'] = 0
 
-        # Aggregated emissions for CLCA
-        out['v_12_2_6_Global_Milk_Substitution_CO2_aggregate_Mg_CO2eq_per_year']=0
-        out['v_12_2_5_Global_Dairy_Afforestation_CO2_aggregate_Mg_CO2eq_per_year']=0
-        out['v_12_2_6_Global_Dairy_Afforestation_ROW_CO2_aggregate_Mg_CO2eq_per_year']=0
-        out['v_12_2_6_Global_Beef_Net_Deforestation_Domestic_CO2_aggregate_Mg_CO2eq_per_year']=0
-        out['v_12_2_6_Global_Beef_Substitution_Domestic_CO2_aggregate_Mg_CO2eq_per_year']=0
-        out['v_12_2_6_Global_Avoided_NEC_CO2_aggregate_Mg_CO2eq_per_year']=0
-        
         # v_12_6 - Emissions intensity   
         out['v_12_6_2_1_1_Global_Change_Enteric_CH4_intensity_kg_CO2eq_per_year'] = 0 
         out['v_12_6_2_1_2_Global_Change_Manure_CH4_intensity_kg_CO2eq_per_year'] = 0
@@ -2717,16 +2611,7 @@ def sim_engine(  res,
         out['v_12_6_2_7_Global_Change_Cropland_Expansion_CO2_improved_intensity_kg_CO2eq_per_year'] = 0
         out['v_12_6_2_8_Global_Change_Grassland_Expansion_direct_CO2_improved_intensity_kg_CO2eq_per_year'] = 0
 
-        # change in emissions as part of clca
-        out['v_12_6_2_2_3_Global_Change_Milk_Substitution_CO2_intensity_kg_CO2eq_per_year'] =0
-        out['v_12_6_2_2_4_Global_Change_Afforestation_CO2_intensity_kg_CO2eq_per_year'] =0
-        out['v_12_6_2_2_5_Global_Change_Dairy_Afforestation_ROW_CO2_intensity_kg_CO2eq_per_year']=0
-        out['v_12_6_2_2_6_Global_Change_Beef_Net_Deforestation_Domestic_CO2_intensity_kg_CO2eq_per_year']=0
-        out['v_12_6_2_2_2_Global_Change_Beef_Substitution_Domestic_CO2_intensity_kg_CO2eq_per_year'] =0
-        out['v_12_6_2_2_8_Global_Change_Beef_Net_CO2_intensity_kg_CO2eq_per_year']=0
-        out['v_12_6_2_2_8_Global_Change_Beef_Net_ROW_CO2_intensity_kg_CO2eq_per_year']=0
-        out['v_12_6_2_2_8_Global_Change_Beef_Net_Domestic_CO2_intensity_kg_CO2eq_per_year']=0
-
+        # change in emissions 
 
         out['v_12_6_1_1_Global_Change_Enteric_CH4_aggregate_Mg_CO2eq_per_year'] =0
         out['v_12_6_1_2_Global_Change_Manure_CH4_aggregate_Mg_CO2eq_per_year'] =0
@@ -2751,20 +2636,7 @@ def sim_engine(  res,
         out['v_12_6_2_1_8_Global_Change_Grassland_Expansion_CO2_intensity_kg_CO2eq_per_year'] =0
         out['v_12_6_2_1_8_Global_Change_Grassland_Expansion_direct_CO2_intensity_kg_CO2eq_per_year'] =0
 
-        # change in emissions as part of clca
-        #out['v_12_6_2_2_2_Global_Change_Beef_Substitution_CO2_intensity_kg_CO2eq_per_year']=0
-        out['v_12_6_2_2_3_Global_Change_Milk_Substitution_CO2_intensity_kg_CO2eq_per_year'] =0
-        out['v_12_6_2_2_4_Global_Change_Afforestation_CO2_intensity_kg_CO2eq_per_year'] =0
-        out['v_12_6_2_2_5_Global_Change_Dairy_Afforestation_ROW_CO2_intensity_kg_CO2eq_per_year']=0
 
-        out['v_12_6_2_2_6_Global_Change_Beef_Net_Deforestation_Domestic_CO2_intensity_kg_CO2eq_per_year']=0
-        out['v_12_6_2_2_2_Global_Change_Beef_Substitution_Domestic_CO2_intensity_kg_CO2eq_per_year'] =0
-        #out['v_12_6_2_2_2_Global_Change_Beef_Substitution_Row_CO2_intensity_kg_CO2eq_per_year'] =0
-
-        out['v_12_6_2_2_8_Global_Change_Beef_Net_CO2_intensity_kg_CO2eq_per_year']=0
-        out['v_12_6_2_2_8_Global_Change_Beef_Net_ROW_CO2_intensity_kg_CO2eq_per_year']=0
-        out['v_12_6_2_2_8_Global_Change_Beef_Net_Domestic_CO2_intensity_kg_CO2eq_per_year']=0
-        
         # v_12_7_1 - feed intake Mg per year 
         out['v_12_7_1_1_Feed_intake_grass_Mg_per_year']  =0
         out['v_12_7_1_2_Feed_intake_stover_Mg_per_year']  =0
@@ -2811,13 +2683,11 @@ def sim_engine(  res,
         # If the current simulation unit is non-final, add results from results dictionary to aggregated variables
         
         if ( (reg_analysis  == 1)  & (l == lps[len(lps)-1]) & (r == reg[len(reg)-1]) ):
-
+            
             for systems in lps:
-                
                 for regions in reg:
-
+                  
                         if (  ((systems == lps[0]) or (regions < reg[len(reg)-1])) and ((len(lps) != 1))  ):
-                            # aggregated results
 
                             out['v_12_1_Global_Milk_yield_Mg_yr'] += res[(s,systems,regions)]['v1_2_Milk_yield_total_kg_yr']/1000
                             out['v_12_1_Global_Total_Emissions_Mg_yr'] += (
@@ -2841,7 +2711,6 @@ def sim_engine(  res,
                                         res[(s,systems,regions)]['v1_3_Avoided_Beef_kg_per_year_'+str(ss)+'_'+str(b)])
                                     
 
-
                             out['v_12_2_1_1_Global_Enteric_CH4_aggregate_Mg_CO2eq_per_year'] += (
                                 res[(s,systems,regions)]['v6_0_1_Enteric_CH4_aggregate_Mg_CO2eq_per_lps'])
                             out['v_12_2_1_2_Global_Manure_CH4_aggregate_Mg_CO2eq_per_year'] += (
@@ -2861,9 +2730,6 @@ def sim_engine(  res,
                             out['v_12_2_1_5_Global_Grassland_Expansion_direct_CO2_aggregate_Mg_CO2eq_per_year'] += (
                                 res[(s,systems,regions)]['v6_0_6_grassland_expansion_direct_emissions_Mg_CO2eq_per_lps'])
 
-                            out['v_12_2_1_5_Global_Dairy_Afforestation_CO2_aggregate_Mg_CO2eq_per_year'] += (
-                                res[(s,systems,regions)]['v6_0_9_afforestation_emissions_Mg_CO2eq_per_lps'])
-
 
                             # local
                             out['v_12_2_2_1_Global_Enteric_CH4_local_aggregate_Mg_CO2eq_per_year'] += (
@@ -2882,9 +2748,6 @@ def sim_engine(  res,
                                 res[(s,systems,regions)]['v6_1_8_cropland_expansion_local_emissions_Mg_CO2eq_per_lps'])
                             out['v_12_2_2_5_Global_Grassland_Expansion_CO2_local_aggregate_Mg_CO2eq_per_year'] += ( 
                                 res[(s,systems,regions)]['v6_1_6_grassland_expansion_local_emissions_Mg_CO2eq_per_lps'] )
-
-                            out['v_12_2_2_5_Global_Dairy_Afforestation_CO2_local_aggregate_Mg_CO2eq_per_year'] += (
-                                res[(s,systems,regions)]['v6_1_9_afforestation_local_emissions_Mg_CO2eq_per_lps'] )
 
 
                             # improved
@@ -2907,14 +2770,11 @@ def sim_engine(  res,
                             out['v_12_2_3_5_Global_Dairy_Afforestation_CO2_improved_aggregate_Mg_CO2eq_per_year'] += (
                                 res[(s,systems,regions)]['v6_2_9_afforestation_improved_emissions_Mg_CO2eq_per_lps'] )
 
-
-
                             out['v_12_1_Error_absolute_Mg'] +=  res[(s,systems,regions)]['v_11_2_error_absolute_Mg']
                             
                             if (ss_analysis  == 0):
                                 out['v_12_1_Error_absolute_local_Mg'] +=  res[(s,systems,regions)]['v_11_2_error_absolute_local_Mg']
                                 out['v_12_1_Error_absolute_improved_Mg'] +=  res[(s,systems,regions)]['v_11_2_error_absolute_improved_Mg']
-
 
                             out['v_12_5_1_herd_total_TLU']  += res[(s,systems,regions)]['v8_6_herd_total_TLU_per_lps']
 
@@ -2926,7 +2786,7 @@ def sim_engine(  res,
                                 out['v_12_5_1_herd_total_TLU_Local']  += (
                                     res[(s,systems,regions)]['v8_7_herd_total_local_TLU_per_lps'] )
 
-                            # double counting?
+                          
                             for ss in subsectors:
                                 for c in cohort:
                                     out['v_12_5_2_herd_total_local']  += ( 
@@ -2935,14 +2795,9 @@ def sim_engine(  res,
                                         res[(s,systems,regions)]['v8_1_herd_'+str(ss)+'_improved_'+str(c)] )
 
 
-
-
-
                             out['v_12_8_1_Grass_area_Total_ha']  += ( res[(s,systems,regions)]['v9_2_1_Grasslands_area_ha_per_lps'] )
                             out['v_12_8_1_Feed_area_Total_ha'] += ( res[(s,systems,regions)]['v9_2_2_Feed_area_ha_per_lps'] )
                             out['v_12_8_1_Crop_primary_Total_ha'] += ( res[(s,systems,regions)]['v9_2_3_Crop_primary_area_ha_per_lps'] )
-
-
 
 
                             out['v_12_7_1_1_Feed_intake_grass_Mg_per_year']  += res[(s,systems,regions)]['v3_2_6_Feed_intake_grass_kg_dm']
@@ -2959,8 +2814,6 @@ def sim_engine(  res,
                                 res[(s,systems,regions)]['v3_2_11_Feed_intake_pasture_kg_dm'])
                             out['v_12_7_1_7_Feed_intake_napier_Mg_per_year']  += (
                                 res[(s,systems,regions)]['v3_2_8_Feed_intake_napier_kg_dm'])
-
-
 
                             out['v_12_8_2_1_Grass_area_ha']  += res[(s,systems,regions)]['v9_4_1_Grass_area_ha_per_lps']
                             out['v_12_8_2_2_Stover_area_ha']  += res[(s,systems,regions)]['v9_4_2_Stover_area_ha_per_lps']
@@ -2985,14 +2838,8 @@ def sim_engine(  res,
 
                             if (check_feasibility == 1):
                                 out['v_12_1_Global_Total_Grasslands_Now_Utilized_ha'] += 100*out['v6_0_total_grasslands_now_utilized(ha)']
-
-                            for ss in subsectors:
-                                
-                                for b in breed:
-                                    out['v_12_1_Global_Beef_Displacement_Mg_per_year'] +=  ((1/1000)*
-                                    out['v1_3_Avoided_Beef_kg_per_year_'+str(ss)+'_'+str(b)])
-                                                                                                                                                            
-                            # Both
+                                                                                                              
+                            # Both breeds
                             out['v_12_2_1_1_Global_Enteric_CH4_aggregate_Mg_CO2eq_per_year'] += (
                                 out['v6_0_1_Enteric_CH4_aggregate_Mg_CO2eq_per_lps'] )
                             out['v_12_2_1_2_Global_Manure_CH4_aggregate_Mg_CO2eq_per_year'] += (
@@ -3035,7 +2882,6 @@ def sim_engine(  res,
                                 out['v6_1_6_grassland_expansion_local_emissions_Mg_CO2eq_per_lps'])
                             out['v_12_2_2_5_Global_Grassland_Expansion_direct_CO2_local_aggregate_Mg_CO2eq_per_year'] += (
                                 out['v6_1_6_grassland_expansion_direct_local_emissions_Mg_CO2eq_per_lps'])
-
 
                             # improved
                             out['v_12_2_3_1_Global_Enteric_CH4_improved_aggregate_Mg_CO2eq_per_year'] += (
@@ -3100,8 +2946,6 @@ def sim_engine(  res,
 
 
             # Aggregate total emissions intensity
-            out['v_12_2_5_Global_Dairy_Afforestation_CO2_aggregate_Mg_CO2eq_per_year'] = (
-                (1)*out['v_12_2_1_5_Global_Dairy_Afforestation_CO2_aggregate_Mg_CO2eq_per_year'] )
             out['v_12_3_1_Global_Enteric_CH4_intensity_kg_CO2eq_per_year'] = (  
                 out['v_12_2_1_1_Global_Enteric_CH4_aggregate_Mg_CO2eq_per_year'] /out['v_12_1_Global_Milk_yield_Mg_yr'] )
             out['v_12_3_2_Global_Manure_CH4_intensity_kg_CO2eq_per_year'] = (
@@ -3123,9 +2967,6 @@ def sim_engine(  res,
             out['v_12_3_5_Global_Total_LUC_CO2_intensity_kg_CO2eq_per_year'] = (
             out['v_12_3_5_Global_Cropland_expansion_CO2_intensity_kg_CO2eq_per_year']+
             out['v_12_3_5_Global_Grassland_expansion_CO2_intensity_kg_CO2eq_per_year'])
-
-            out['v_12_3_5_Global_Afforestation_CO2_intensity_kg_CO2eq_per_year']  = (
-             out['v_12_2_1_5_Global_Dairy_Afforestation_CO2_aggregate_Mg_CO2eq_per_year']/out['v_12_1_Global_Milk_yield_Mg_yr'])
 
             # intensity local
             if ('local' in breed):
@@ -3153,9 +2994,7 @@ def sim_engine(  res,
                 out['v_12_3_1_5_Global_Grassland_expansion_direct_CO2_local_intensity_kg_CO2eq_per_year'] = (
                   out['v_12_2_2_5_Global_Grassland_Expansion_direct_CO2_local_aggregate_Mg_CO2eq_per_year']/
                     out['v_12_1_Global_Milk_yield_Local_Mg_yr'] )
-                out['v_12_3_1_5_Global_Afforestation_CO2_local_intensity_kg_CO2eq_per_year']  = (
-                 out['v_12_2_2_5_Global_Dairy_Afforestation_CO2_local_aggregate_Mg_CO2eq_per_year']/
-                    out['v_12_1_Global_Milk_yield_Local_Mg_yr'])
+ 
 
             # intensity improved
             #if (('improved' in breed) & (herd[(ss,'improved','herd_pop')] != 0)):
@@ -3187,9 +3026,6 @@ def sim_engine(  res,
                 out['v_12_3_2_5_Global_Grassland_expansion_direct_CO2_improved_intensity_kg_CO2eq_per_year'] = (
                     out['v_12_2_3_5_Global_Grassland_Expansion_direct_CO2_improved_aggregate_Mg_CO2eq_per_year']/
                     out['v_12_1_Global_Milk_yield_Improved_Mg_yr']  )
-                out['v_12_3_2_5_Global_Afforestation_CO2_improved_intensity_kg_CO2eq_per_year']  = (
-                    out['v_12_2_3_5_Global_Dairy_Afforestation_CO2_improved_aggregate_Mg_CO2eq_per_year']/
-                    out['v_12_1_Global_Milk_yield_Improved_Mg_yr'] )
 
 
             # total per animal unit
@@ -3218,9 +3054,6 @@ def sim_engine(  res,
             out['v_12_4_5_Global_Cropland_expansion_per_animal_Mg_CO2eq_per_TLU_per_year'] )
             out['v_12_4_5_Global_Grassland_expansion_direct_per_animal_Mg_CO2eq_per_TLU_per_year'] = (
                 out['v_12_2_1_5_Global_Grassland_Expansion_direct_CO2_aggregate_Mg_CO2eq_per_year']/out['v_12_5_1_herd_total_TLU'] )
-            out['v_12_4_5_Global_Afforestation_per_animal_Mg_CO2eq_per_TLU_per_year'] = (
-                out['v_12_2_1_5_Global_Dairy_Afforestation_CO2_aggregate_Mg_CO2eq_per_year']/
-                out['v_12_5_1_herd_total_TLU'] )
 
 
             # per unit local
@@ -3251,17 +3084,13 @@ def sim_engine(  res,
                 out['v_12_4_1_5_Global_Grassland_expansion_direct_local_per_animal_Mg_CO2eq_per_TLU_per_year'] = (
                   out['v_12_2_2_5_Global_Grassland_Expansion_direct_CO2_local_aggregate_Mg_CO2eq_per_year']/
                     out['v_12_5_1_herd_total_TLU_Local'] )
-                out['v_12_4_1_5_Global_Afforestation_local_per_animal_Mg_CO2eq_per_TLU_per_year'] = (
-                    out['v_12_2_2_5_Global_Dairy_Afforestation_CO2_local_aggregate_Mg_CO2eq_per_year']/ 
-                    out['v_12_5_1_herd_total_TLU_Local'] )
 
             # per unit improved
             #if (('improved' in breed) & (herd[(ss,'improved','herd_pop')] != 0)):
             if (('improved' in breed)):
                 out['v_12_4_2_1_Global_Enteric_CH4_improved_per_animal_Mg_CO2eq_per_TLU_per_year'] = (
                     out['v_12_2_3_1_Global_Enteric_CH4_improved_aggregate_Mg_CO2eq_per_year'] /  
-                    out['v_12_5_1_herd_total_TLU_Improved'] )
-                                                                                                     
+                    out['v_12_5_1_herd_total_TLU_Improved'] )                                                                                    
                 out['v_12_4_2_2_Global_Manure_CH4_improved_per_animal_Mg_CO2eq_per_TLU_per_year'] = (
                     out['v_12_2_3_2_Global_Manure_CH4_improved_aggregate_Mg_CO2eq_per_year'] /
                     out['v_12_5_1_herd_total_TLU_Improved']) 
@@ -3285,10 +3114,7 @@ def sim_engine(  res,
                 out['v_12_4_2_5_Global_Grassland_expansion_direct_improved_per_animal_Mg_CO2eq_per_TLU_per_year'] = (
                     out['v_12_2_3_5_Global_Grassland_Expansion_direct_CO2_improved_aggregate_Mg_CO2eq_per_year']/
                     out['v_12_5_1_herd_total_TLU_Improved'] )                                                                         
-                out['v_12_4_2_5_Global_Afforestation_improved_per_animal_Mg_CO2eq_per_TLU_per_year'] = (
-                 out['v_12_2_3_5_Global_Dairy_Afforestation_CO2_improved_aggregate_Mg_CO2eq_per_year']/
-                    out['v_12_5_1_herd_total_TLU_Improved'] )
-                                                                                                     
+                                                                        
 
             if (s != 'Base'):
                 out['v_12_6_1_1_Global_Change_Enteric_CH4_aggregate_Mg_CO2eq_per_year'] =  (
@@ -3349,117 +3175,6 @@ def sim_engine(  res,
                     out['v_12_1_Global_Milk_yield_Mg_yr'] - 
                     res[('Base',systems,regions)]['v_12_3_5_Global_Grassland_expansion_CO2_intensity_kg_CO2eq_per_year'])
 
-                out['v_12_6_2_2_1_Global_Change_Total_Simple_CF_CO2_intensity_kg_CO2eq_per_year'] =(
-                out['v_12_6_2_1_1_Global_Change_Enteric_CH4_intensity_kg_CO2eq_per_year'] 
-                +out['v_12_6_2_1_2_Global_Change_Manure_CH4_intensity_kg_CO2eq_per_year']
-                +out['v_12_6_2_1_3_Global_Change_Manure_N2O_intensity_kg_CO2eq_per_year'] 
-                +out['v_12_6_2_1_4_Global_Change_Soil_N2O_cropland_intensity_kg_CO2eq_per_year'] 
-                +out['v_12_6_2_1_5_Global_Change_Soil_N2O_grassland_intensity_kg_CO2eq_per_year'] 
-                +out['v_12_6_2_1_6_Global_Change_Energy_Use_CO2_intensity_kg_CO2eq_per_year']
-                +out['v_12_6_2_1_7_Global_Change_Cropland_Expansion_CO2_intensity_kg_CO2eq_per_year'] 
-                +out['v_12_6_2_1_8_Global_Change_Grassland_Expansion_direct_CO2_intensity_kg_CO2eq_per_year']
-                )                                                                                  
-
-
-
-                if (consequential == 1):
-                    
-                    # Substituted beef
-                    out['v_12_2_6_Global_Beef_Substitution_Domestic_CO2_aggregate_Mg_CO2eq_per_year']=(-1)*(1)*(
-                    scenario_parameters[(ss,'beef_subs_Dom',s)]*(
-                        out['v_12_1_Global_Beef_Displacement_Mg_per_year'] - 
-                        res[('Base',lps[len(lps)-1],regions)]['v_12_1_Global_Beef_Displacement_Mg_per_year']))
-                    
-                    out['v_12_6_2_2_2_Global_Change_Beef_Substitution_Domestic_CO2_intensity_kg_CO2eq_per_year'] =(-1)*(
-                    scenario_parameters[(ss,'beef_subs_Dom',s)]*(
-                        out['v_12_1_Global_Beef_Displacement_Mg_per_year'] - 
-                        res[('Base',systems,regions)['v_12_1_Global_Beef_Displacement_Mg_per_year']]) /
-                            out['v_12_1_Global_Milk_yield_Mg_yr'])
-
-                    # if deforestation occurs, calculate this based on additional gl expansion resulting from demand for beef land 
-                    if ( (out['v_12_1_Global_Beef_Displacement_Mg_per_year']   - 
-                          res[('Base',systems,regions)]['v_12_1_Global_Beef_Displacement_Mg_per_year']) < 0):
-
-                        out['v_12_2_6_Global_Beef_Net_Deforestation_Domestic_CO2_aggregate_Mg_CO2eq_per_year']=0       
-                        out['v_12_6_2_2_6_Global_Change_Beef_Net_Deforestation_Domestic_CO2_intensity_kg_CO2eq_per_year']=-5
-
-                    else:
-                        out['v_12_2_6_Global_Beef_Net_Deforestation_Domestic_CO2_aggregate_Mg_CO2eq_per_year']=0
-                        out['v_12_6_2_2_6_Global_Change_Beef_Net_Deforestation_Domestic_CO2_intensity_kg_CO2eq_per_year']=0
-
-                    # Dairy
-                    # Dairy substitution
-                    out['v_12_2_6_Global_Milk_Substitution_CO2_aggregate_Mg_CO2eq_per_year'] = ((-1)*1*
-                    scenario_parameters[(ss,'milk_subs',s)]*(out['v_12_1_Global_Milk_yield_Mg_yr'] - 
-                    res[('Base',systems,regions)]['v_12_1_Global_Milk_yield_Mg_yr']))
-                            
-                    out['v_12_6_2_2_3_Global_Change_Milk_Substitution_CO2_intensity_kg_CO2eq_per_year'] = ((-1)*(1)*
-                    scenario_parameters[(ss,'milk_subs',s)]*(out['v_12_1_Global_Milk_yield_Mg_yr'] -
-                    res[('Base',systems,regions)]['v_12_1_Global_Milk_yield_Mg_yr']))/out['v_12_1_Global_Milk_yield_Mg_yr']
-
-                    # Avoided NEC
-                    out['v_12_2_6_Global_Avoided_NEC_CO2_aggregate_Mg_CO2eq_per_year'] = (
-                    (out['v_12_2_5_Global_Grassland_Expansion_CO2_aggregate_Mg_CO2eq_per_year']  
-                    -out['v_12_2_5_Global_Grassland_Expansion_direct_CO2_aggregate_Mg_CO2eq_per_year'])
-                    -(res[('Base',systems,regions)]['v_12_2_5_Global_Grassland_Expansion_CO2_aggregate_Mg_CO2eq_per_year']
-                    -res[('Base',systems,regions)]['v_12_2_5_Global_Grassland_Expansion_direct_CO2_aggregate_Mg_CO2eq_per_year']))
-
-                    out['v_12_6_2_2_3_Global_Change_Avoided_NEC_CO2_intensity_kg_CO2eq_per_year'] = out['v_12_2_6_Global_Avoided_NEC_CO2_aggregate_Mg_CO2eq_per_year']/out['v_12_1_Global_Milk_yield_Mg_yr']
-
-
-                    # Afforestation
-
-                    # Afforestation on domestic spared dairy land (based on v_12_2_7_Global_Afforestation_CO2_aggregate_Mg_CO2eq_per_year)
-                    if (scenario_parameters[(ss,'milk_affor_dom',s)] == 1):
-                        out['v_12_2_5_Global_Dairy_Afforestation_CO2_aggregate_Mg_CO2eq_per_year'] = (-1)*(44/12)*(1000000)*(
-                            res[('Base',systems,regions)]['v_12_1_Global_Total_Land_Footprint_Mha']*
-                            out['v_12_1_Global_Total_Land_Footprint_Mha'])*(
-                            Reforestation_emission_coefficient_domestic)*(timestep/amort_period)/timestep 
-                        
-                        out['v_12_6_2_2_4_Global_Change_Afforestation_CO2_intensity_kg_CO2eq_per_year'] =  (
-                            out['v_12_2_5_Global_Dairy_Afforestation_CO2_aggregate_Mg_CO2eq_per_year'] /
-                            out['v_12_1_Global_Milk_yield_Mg_yr'] )
-                                                                                                          
-                    else: 
-                        out['v_12_2_5_Global_Dairy_Afforestation_CO2_aggregate_Mg_CO2eq_per_year'] = 0
-                        out['v_12_6_2_2_4_Global_Change_Afforestation_CO2_intensity_kg_CO2eq_per_year'] =  0
-
-
-                    # Afforestation on international spared dairy land (based on 'v1_3_Avoided_Dairy_ROW_Land_use') 
-                    if (scenario_parameters[(ss,'milk_affor_row',s)] == 1):
-                        out['v_12_2_6_Global_Dairy_Afforestation_ROW_CO2_aggregate_Mg_CO2eq_per_year']=(44/12)*(-1)*(
-                            (Reforestation_emission_coefficient_row)*
-                             (timestep/amort_period)/timestep)*(
-                            out['v1_3_Avoided_Dairy_ROW_Land_use'] - res[('Base',systems,regions)]['v1_3_Avoided_Dairy_ROW_Land_use'])
-                            
-                        out['v_12_6_2_2_5_Global_Change_Dairy_Afforestation_ROW_CO2_intensity_kg_CO2eq_per_year'] = (44/12)*(-1)*(
-                            (Reforestation_emission_coefficient_row)*(
-                            timestep/amort_period)/timestep)*(
-                                out['v1_3_Avoided_Dairy_ROW_Land_use'] - 
-                                res[('Base',systems,regions)]['v1_3_Avoided_Dairy_ROW_Land_use'])/(
-                            out['v_12_1_Global_Milk_yield_Mg_yr']) 
-
-                    else:
-                        out['v_12_2_6_Global_Dairy_Afforestation_ROW_CO2_aggregate_Mg_CO2eq_per_year']=0
-                        out['v_12_6_2_2_5_Global_Change_Dairy_Afforestation_ROW_CO2_intensity_kg_CO2eq_per_year'] =0
-
-
-                    # Aggregated variables 
-                    out['v_12_6_2_2_8_Global_Change_Beef_Net_Domestic_CO2_intensity_kg_CO2eq_per_year']=(
-                    out['v_12_6_2_2_4_Global_Change_Afforestation_CO2_intensity_kg_CO2eq_per_year'] +
-                    out['v_12_6_2_2_3_Global_Change_Avoided_NEC_CO2_intensity_kg_CO2eq_per_year']+
-                    out['v_12_6_2_2_6_Global_Change_Beef_Net_Deforestation_Domestic_CO2_intensity_kg_CO2eq_per_year']+
-                    out['v_12_6_2_2_2_Global_Change_Beef_Substitution_Domestic_CO2_intensity_kg_CO2eq_per_year']+
-                    out['v_12_6_2_2_1_Global_Change_Total_Simple_CF_CO2_intensity_kg_CO2eq_per_year'] )
-
-                    out['v_12_6_2_2_8_Global_Change_Beef_Net_ROW_CO2_intensity_kg_CO2eq_per_year']=(
-                    out['v_12_6_2_2_3_Global_Change_Milk_Substitution_CO2_intensity_kg_CO2eq_per_year'] +
-                    out['v_12_6_2_2_5_Global_Change_Dairy_Afforestation_ROW_CO2_intensity_kg_CO2eq_per_year'] )
-
-                    out['v_12_6_2_2_8_Global_Change_Beef_Net_CO2_intensity_kg_CO2eq_per_year']= (
-                    out['v_12_6_2_2_8_Global_Change_Beef_Net_ROW_CO2_intensity_kg_CO2eq_per_year']+
-                    out['v_12_6_2_2_8_Global_Change_Beef_Net_Domestic_CO2_intensity_kg_CO2eq_per_year'] )
-
             out['v_12_6_1_7_Global_Change_Total_aggregate_Mg_CO2eq_per_year'] =  (
             out['v_12_6_1_1_Global_Change_Enteric_CH4_aggregate_Mg_CO2eq_per_year'] 
             +out['v_12_6_1_2_Global_Change_Manure_CH4_aggregate_Mg_CO2eq_per_year']
@@ -3470,53 +3185,6 @@ def sim_engine(  res,
             +out['v_12_6_1_5_Global_Change_Cropland_Expansion_CO2_aggregate_Mg_CO2eq_per_year']
             +out['v_12_6_1_5_Global_Change_Grassland_Expansion_direct_CO2_aggregate_Mg_CO2eq_per_year']
             )
-
-
-            # Aggregated GHG Inventories for attributional, consequential domestic and consequential ROW
-            if (s != 'Base'):
-                out['v_12_2_7_Global_Simple_CF_aggregate_Mg_CO2eq_per_year'] =  (
-                out['v_12_2_1_1_Global_Enteric_CH4_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_2_Global_Manure_CH4_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_3_Global_Manure_N2O_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_4_Global_Soil_N2O_cropland_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_4_Global_Soil_N2O_grassland_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_4_Global_Energy_Use_CO2_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_5_Global_Cropland_Expansion_CO2_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_5_Global_Grassland_Expansion_direct_CO2_aggregate_Mg_CO2eq_per_year'] 
-                )  - res[('Base',systems,regions)]['v_12_2_7_Global_Simple_CF_aggregate_Mg_CO2eq_per_year']
-
-            else:
-                out['v_12_2_7_Global_Simple_CF_aggregate_Mg_CO2eq_per_year'] =  (
-                out['v_12_2_1_1_Global_Enteric_CH4_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_2_Global_Manure_CH4_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_3_Global_Manure_N2O_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_4_Global_Soil_N2O_cropland_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_4_Global_Soil_N2O_grassland_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_4_Global_Energy_Use_CO2_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_5_Global_Cropland_Expansion_CO2_aggregate_Mg_CO2eq_per_year'] 
-                +out['v_12_2_1_5_Global_Grassland_Expansion_direct_CO2_aggregate_Mg_CO2eq_per_year'] 
-                )  
-
-
-            out['v_12_2_8_Global_Conseq_Dom_aggregate_Mg_CO2eq_per_year'] =  (
-                out['v_12_2_7_Global_Simple_CF_aggregate_Mg_CO2eq_per_year']
-                +out['v_12_2_6_Global_Beef_Substitution_Domestic_CO2_aggregate_Mg_CO2eq_per_year']
-                +out['v_12_2_5_Global_Dairy_Afforestation_CO2_aggregate_Mg_CO2eq_per_year']
-                +out['v_12_2_6_Global_Beef_Net_Deforestation_Domestic_CO2_aggregate_Mg_CO2eq_per_year']
-                +out['v_12_2_6_Global_Avoided_NEC_CO2_aggregate_Mg_CO2eq_per_year'] 
-            ) 
-
-            out['v_12_2_8_Global_Conseq_ROW_aggregate_Mg_CO2eq_per_year'] =  (
-                out['v_12_2_6_Global_Milk_Substitution_CO2_aggregate_Mg_CO2eq_per_year']
-                + out['v_12_2_6_Global_Dairy_Afforestation_ROW_CO2_aggregate_Mg_CO2eq_per_year']
-                )
-            out['v_12_2_8_Global_Conseq_Aggregate_Mg_CO2eq_per_year'] =  (
-                out['v_12_2_8_Global_Conseq_ROW_aggregate_Mg_CO2eq_per_year']+
-                out['v_12_2_8_Global_Conseq_Dom_aggregate_Mg_CO2eq_per_year'] 
-            )
-
-            out['v_12_2_8_Global_Conseq_xx'] =  (0)
-
 
             # Feed intake per tlu
             out['v_12_7_2_1_Feed_intake_grass_kg_dm_per_TLU']  = ( 
