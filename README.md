@@ -3,11 +3,13 @@ National livestock sector development is compatible with climate mitigation pled
 
 Description
 Folder contents include:
+
 •	Excel sheets (.xlsx) used in income accounting, and 
 •	Python files (.py & .ipynb) forming the components of the model used to conduct livestock production system simulations. 
 The .py file can be run in any python environment, and the .ipynb file can be run as a notebook in Jupyter.
 
 Contents
+
 Excel
 •	Income per household by district (Mufindi, Mvomero, Njombe, Rungwe)
 	- Used to conduct dairy income calculations, household income, and uncertainty analysis for income estimates for each household across districts
