@@ -1,5 +1,4 @@
-Outline of model files for:
-National livestock sector development is compatible with climate mitigation pledges: evidence from Tanzania’s dairy sector
+Outline of model files for: Reduced dairy import dependency helps mitigate Tanzania’s GHG emissions
 
 Description
 Folder contents include:
