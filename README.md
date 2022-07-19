@@ -1,4 +1,4 @@
-Outline of model files for: Reduced dairy dependency helps mitigate Tanzania’s GHG emissions
+Outline of model files for: Reduced dairy import dependency helps mitigate Tanzania’s GHG emissions
 
 Description
 Folder contents include:
